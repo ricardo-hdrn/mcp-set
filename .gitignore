@@ -2,7 +2,7 @@
 **/target
 Cargo.lock
 
-# Local MCP configs (created by add-mcp local installs)
+# Local MCP configs (created by mcp-set local installs)
 .mcp.json
 .codex/
 .cursor/

@@ -1,6 +1,8 @@
-# add-mcp
+# mcp-set
 
 Install MCP servers into AI client configurations. Rust library + CLI.
+
+Supports 4 package managers (npm, pip, go, cargo) and 10 AI clients.
 
 ## Supported Clients
 
@@ -21,32 +23,41 @@ Install MCP servers into AI client configurations. Rust library + CLI.
 
 ```bash
 # Install a local binary
-add-mcp install /path/to/mcp-server -a claude-code -g
+mcp-set install /path/to/mcp-server -a claude-code -g
 
 # Install a URL endpoint
-add-mcp install https://example.com/mcp -a vscode -a cursor -g
+mcp-set install https://example.com/mcp -a vscode -a cursor -g
 
-# Install an npm package
-add-mcp install @org/mcp-server -a claude-code -g
+# Install an npm package (auto-detected)
+mcp-set install @org/mcp-server -a claude-code -g
+
+# Install a pip package
+mcp-set install mcp-server-fetch --from pip -a claude-code -g
+
+# Install a Go module (auto-detected)
+mcp-set install github.com/user/mcp -a claude-code -g
+
+# Install a cargo binary
+mcp-set install my-mcp --from cargo -a claude-code -g
 
 # Install to all agents
-add-mcp install /path/to/server --all -g
+mcp-set install /path/to/server --all -g
 
 # With env vars and extra args
-add-mcp install /path/to/server -a claude-code -g -e API_KEY=secret -- --verbose
+mcp-set install /path/to/server -a claude-code -g -e API_KEY=secret -- --verbose
 
 # List supported agents
-add-mcp list-agents
+mcp-set list-agents
 
 # Detect installed agents
-add-mcp detect
-add-mcp detect --local
+mcp-set detect
+mcp-set detect --local
 ```
 
 ## Library Usage
 
 ```rust
-use add_mcp::{install_command, Agent, Scope};
+use mcp_set::{install_command, Agent, Scope};
 
 let binary = std::env::current_exe().unwrap();
 let results = install_command(
@@ -69,7 +80,7 @@ As a dependency (library only, no CLI):
 
 ```toml
 [dependencies]
-add-mcp = { version = "0.1", default-features = false }
+mcp-set = { version = "0.2", default-features = false }
 ```
 
 ## License

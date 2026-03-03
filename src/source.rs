@@ -1,4 +1,4 @@
-use crate::error::{AddMcpError, Result};
+use crate::error::{McpSetError, Result};
 use crate::types::{PackageManager, Source, Transport};
 use std::path::Path;
 
@@ -20,7 +20,7 @@ pub fn parse_source(
 ) -> Result<Source> {
     let trimmed = input.trim();
     if trimmed.is_empty() {
-        return Err(AddMcpError::InvalidSource("empty source".into()));
+        return Err(McpSetError::InvalidSource("empty source".into()));
     }
 
     // URL
@@ -132,7 +132,7 @@ pub fn infer_name(source: &Source) -> Result<String> {
             let stem = path
                 .file_stem()
                 .and_then(|s| s.to_str())
-                .ok_or_else(|| AddMcpError::CannotInferName(command.clone()))?;
+                .ok_or_else(|| McpSetError::CannotInferName(command.clone()))?;
             Ok(stem.to_string())
         }
         Source::Url { url, .. } => {
@@ -140,7 +140,7 @@ pub fn infer_name(source: &Source) -> Result<String> {
             url::Url::parse(url)
                 .ok()
                 .and_then(|u| u.host_str().map(|h| h.to_string()))
-                .ok_or_else(|| AddMcpError::CannotInferName(url.clone()))
+                .ok_or_else(|| McpSetError::CannotInferName(url.clone()))
         }
         Source::Package { manager, package } => {
             match manager {

@@ -8,7 +8,7 @@ pub mod source;
 pub mod transform;
 pub mod types;
 
-pub use error::{AddMcpError, Result};
+pub use error::{McpSetError, Result};
 pub use types::{
     Agent, ConfigFormat, InstallResult, McpServerConfig, PackageManager, Scope, Source, Transport,
 };

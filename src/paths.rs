@@ -1,10 +1,10 @@
-use crate::error::{AddMcpError, Result};
+use crate::error::{McpSetError, Result};
 use crate::types::{Agent, Scope};
 use std::path::{Path, PathBuf};
 
 /// Resolve the config file path for a given agent and scope.
 pub fn config_path(agent: Agent, scope: Scope) -> Result<PathBuf> {
-    let home = dirs::home_dir().ok_or(AddMcpError::HomeDirNotFound)?;
+    let home = dirs::home_dir().ok_or(McpSetError::HomeDirNotFound)?;
     config_path_with_home(agent, scope, &home)
 }
 
@@ -61,7 +61,7 @@ fn local_path(agent: Agent) -> Result<PathBuf> {
         Agent::OpenCode => cwd.join("opencode.json"),
         Agent::Zed => cwd.join(".zed/settings.json"),
         Agent::ClaudeDesktop | Agent::Goose => {
-            return Err(AddMcpError::ConfigPathNotFound {
+            return Err(McpSetError::ConfigPathNotFound {
                 agent: agent.to_string(),
                 scope: "local".into(),
             });

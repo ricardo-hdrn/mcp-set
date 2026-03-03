@@ -46,7 +46,7 @@ impl ServerHandler for EchoServer {
                 version: env!("CARGO_PKG_VERSION").into(),
                 ..Default::default()
             },
-            instructions: Some("A simple echo MCP server for testing add-mcp.".into()),
+            instructions: Some("A simple echo MCP server for testing mcp-set.".into()),
             ..Default::default()
         }
     }

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# live-validate.sh — Validate add-mcp against real AI client configurations.
+# live-validate.sh — Validate mcp-set against real AI client configurations.
 #
 # Installs a dummy MCP server into each client's config, verifies the file,
 # then cleans up. Non-destructive: backs up existing configs and restores them.
@@ -11,11 +11,11 @@ set -euo pipefail
 
 # ─── Config ──────────────────────────────────────────────────────────────────
 
-TEST_SERVER_NAME="__add_mcp_live_test__"
+TEST_SERVER_NAME="__mcp_set_live_test__"
 BINARY="/usr/bin/true"  # dummy command, just needs to exist
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
-ADD_MCP="$PROJECT_DIR/target/release/add-mcp"
+MCP_SET="$PROJECT_DIR/target/release/mcp-set"
 
 # Track results for summary
 declare -a RESULTS=()
@@ -95,7 +95,7 @@ offer_install() {
 # Back up a config file. Records the pair for cleanup.
 backup_config() {
     local path="$1"
-    local backup="${path}.add-mcp-backup"
+    local backup="${path}.mcp-set-backup"
 
     if [[ -f "$path" ]]; then
         cp "$path" "$backup"
@@ -108,7 +108,7 @@ backup_config() {
 # Restore a config file from backup.
 restore_config() {
     local path="$1"
-    local backup="${path}.add-mcp-backup"
+    local backup="${path}.mcp-set-backup"
 
     if [[ -f "$backup" ]]; then
         mv "$backup" "$path"
@@ -130,8 +130,8 @@ cleanup_all() {
         for entry in "${BACKUP_PAIRS[@]}"; do
             local path backup state
             IFS='|' read -r path backup state <<< "$entry"
-            if [[ "$state" == "existed" && -f "${path}.add-mcp-backup" ]]; then
-                mv "${path}.add-mcp-backup" "$path"
+            if [[ "$state" == "existed" && -f "${path}.mcp-set-backup" ]]; then
+                mv "${path}.mcp-set-backup" "$path"
                 log "  Restored: $path"
             elif [[ "$state" == "absent" && -f "$path" ]]; then
                 rm "$path"
@@ -224,7 +224,7 @@ test_claude_code() {
     log "Testing Claude Code..."
     backup_config "$config_path"
 
-    if ! "$ADD_MCP" install "$BINARY" -a "$agent" -g -n "$TEST_SERVER_NAME" -y 2>&1; then
+    if ! "$MCP_SET" install "$BINARY" -a "$agent" -g -n "$TEST_SERVER_NAME" -y 2>&1; then
         record_fail "Claude Code" "install command failed"
         restore_config "$config_path"
         return
@@ -266,7 +266,7 @@ test_claude_desktop() {
     log "Testing Claude Desktop (file read-back only)..."
     backup_config "$config_path"
 
-    if ! "$ADD_MCP" install "$BINARY" -a "$agent" -g -n "$TEST_SERVER_NAME" -y 2>&1; then
+    if ! "$MCP_SET" install "$BINARY" -a "$agent" -g -n "$TEST_SERVER_NAME" -y 2>&1; then
         record_fail "Claude Desktop" "install command failed"
         restore_config "$config_path"
         return
@@ -292,7 +292,7 @@ test_codex() {
     log "Testing Codex..."
     backup_config "$config_path"
 
-    if ! "$ADD_MCP" install "$BINARY" -a "$agent" -g -n "$TEST_SERVER_NAME" -y 2>&1; then
+    if ! "$MCP_SET" install "$BINARY" -a "$agent" -g -n "$TEST_SERVER_NAME" -y 2>&1; then
         record_fail "Codex" "install command failed"
         restore_config "$config_path"
         return
@@ -331,7 +331,7 @@ test_cursor() {
 
     backup_config "$config_path"
 
-    if ! "$ADD_MCP" install "$BINARY" -a "$agent" -g -n "$TEST_SERVER_NAME" -y 2>&1; then
+    if ! "$MCP_SET" install "$BINARY" -a "$agent" -g -n "$TEST_SERVER_NAME" -y 2>&1; then
         record_fail "Cursor" "install command failed"
         restore_config "$config_path"
         return
@@ -357,7 +357,7 @@ test_gemini_cli() {
     log "Testing Gemini CLI..."
     backup_config "$config_path"
 
-    if ! "$ADD_MCP" install "$BINARY" -a "$agent" -g -n "$TEST_SERVER_NAME" -y 2>&1; then
+    if ! "$MCP_SET" install "$BINARY" -a "$agent" -g -n "$TEST_SERVER_NAME" -y 2>&1; then
         record_fail "Gemini CLI" "install command failed"
         restore_config "$config_path"
         return
@@ -391,7 +391,7 @@ test_goose() {
 
     backup_config "$config_path"
 
-    if ! "$ADD_MCP" install "$BINARY" -a "$agent" -g -n "$TEST_SERVER_NAME" -y 2>&1; then
+    if ! "$MCP_SET" install "$BINARY" -a "$agent" -g -n "$TEST_SERVER_NAME" -y 2>&1; then
         record_fail "Goose" "install command failed"
         restore_config "$config_path"
         return
@@ -417,7 +417,7 @@ test_github_copilot() {
     log "Testing GitHub Copilot..."
     backup_config "$config_path"
 
-    if ! "$ADD_MCP" install "$BINARY" -a "$agent" -g -n "$TEST_SERVER_NAME" -y 2>&1; then
+    if ! "$MCP_SET" install "$BINARY" -a "$agent" -g -n "$TEST_SERVER_NAME" -y 2>&1; then
         record_fail "GitHub Copilot" "install command failed"
         restore_config "$config_path"
         return
@@ -443,7 +443,7 @@ test_opencode() {
     log "Testing OpenCode..."
     backup_config "$config_path"
 
-    if ! "$ADD_MCP" install "$BINARY" -a "$agent" -g -n "$TEST_SERVER_NAME" -y 2>&1; then
+    if ! "$MCP_SET" install "$BINARY" -a "$agent" -g -n "$TEST_SERVER_NAME" -y 2>&1; then
         record_fail "OpenCode" "install command failed"
         restore_config "$config_path"
         return
@@ -482,7 +482,7 @@ test_vscode() {
 
     backup_config "$config_path"
 
-    if ! "$ADD_MCP" install "$BINARY" -a "$agent" -g -n "$TEST_SERVER_NAME" -y 2>&1; then
+    if ! "$MCP_SET" install "$BINARY" -a "$agent" -g -n "$TEST_SERVER_NAME" -y 2>&1; then
         record_fail "VS Code" "install command failed"
         restore_config "$config_path"
         return
@@ -521,7 +521,7 @@ test_zed() {
 
     backup_config "$config_path"
 
-    if ! "$ADD_MCP" install "$BINARY" -a "$agent" -g -n "$TEST_SERVER_NAME" -y 2>&1; then
+    if ! "$MCP_SET" install "$BINARY" -a "$agent" -g -n "$TEST_SERVER_NAME" -y 2>&1; then
         record_fail "Zed" "install command failed"
         restore_config "$config_path"
         return
@@ -542,8 +542,8 @@ test_zed() {
 # ─── Main ────────────────────────────────────────────────────────────────────
 
 echo ""
-echo -e "${BOLD}add-mcp Live Validation${NC}"
-echo -e "Tests add-mcp install against real AI client config files."
+echo -e "${BOLD}mcp-set Live Validation${NC}"
+echo -e "Tests mcp-set install against real AI client config files."
 echo -e "Backs up existing configs and restores them after each test."
 echo ""
 
@@ -572,14 +572,14 @@ if [[ ! -f "$BINARY" ]]; then
 fi
 
 # Build
-log "Building add-mcp (release)..."
+log "Building mcp-set (release)..."
 (cd "$PROJECT_DIR" && cargo build --release) || {
     echo -e "${RED}Build failed. Aborting.${NC}"
     exit 1
 }
 
-if [[ ! -x "$ADD_MCP" ]]; then
-    echo -e "${RED}Binary not found at $ADD_MCP. Aborting.${NC}"
+if [[ ! -x "$MCP_SET" ]]; then
+    echo -e "${RED}Binary not found at $MCP_SET. Aborting.${NC}"
     exit 1
 fi
 
