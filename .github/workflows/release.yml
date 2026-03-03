@@ -65,6 +65,18 @@ jobs:
           7z a ../../../mcp-set-${{ matrix.target }}.zip mcp-set.exe
           cd ../../..
 
+      - name: Smoke test (unix)
+        if: runner.os != 'Windows' && !matrix.use-cross
+        run: ./target/${{ matrix.target }}/release/mcp-set --help
+
+      - name: Smoke test (cross/qemu)
+        if: matrix.use-cross
+        run: cross run --release --target ${{ matrix.target }} -- --help
+
+      - name: Smoke test (windows)
+        if: runner.os == 'Windows'
+        run: ./target/${{ matrix.target }}/release/mcp-set.exe --help
+
       - uses: actions/upload-artifact@v4
         with:
           name: mcp-set-${{ matrix.target }}
