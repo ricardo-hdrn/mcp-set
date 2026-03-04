@@ -301,7 +301,8 @@ mod tests {
         };
         match resolve_package(&src) {
             Source::Command { command, args } => {
-                assert!(command.ends_with(".cargo/bin/my-mcp"));
+                let p = std::path::Path::new(&command);
+                assert!(p.ends_with(".cargo/bin/my-mcp"));
                 assert!(args.is_empty());
             }
             _ => panic!("expected Command"),
